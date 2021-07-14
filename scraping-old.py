@@ -1,36 +1,34 @@
-# Import Splinter and BeautifulSoupfrom splinter import Browser
+#Import Splinter, BeautifulSoup, and Pandas
 from splinter import Browser
 from bs4 import BeautifulSoup as soup
 import pandas as pd
 import datetime as dt
 from webdriver_manager.chrome import ChromeDriverManager
 
-#html = browser.html
-#news_soup = soup(html, 'html.parser')
-#slide_elem = news_soup.select_one('div.list_text')
+browser=None
 
 def scrape_all():   
     ## Initiate headless driver for deployment
+    #executable_path = {'executable_path': ChromeDriverManager()}
+    #browser = Browser('chrome', **executable_path, headless=False)
+    # Set up Splinter
     executable_path = {'executable_path': 'C:\Program Files\Google\Chrome\Application\chromedriver.exe'}
-    browser = Browser('chrome', **executable_path, headless=True)
-    
-    img_urls(browser)
+    browser = Browser('chrome', **executable_path, headless=False)
     news_title, news_paragraph = mars_news(browser)
-    image_url, title = mars_facts(browser)
-    #Run all scraping functions and store results in a dictionary
 
-    #Run all scraping functions and store results in dictionary: 
-    data = {
-            "news_title": news_title,
-            "news_paragraph": news_paragraph,
-            "featured_image": featured_image(browser),
-            "facts": mars_facts(),
-            "last modified": dt.datetime.now(),
-            "img_url": title
-    }
-    # stop webdriver and return data
-    browser.quit()
-    return data
+    #Run all scraping functions and store results in a dictionary
+    
+    #data = {
+    #   "Cerberus Hemisphere Enhanced": 'https://marshemispheres.com/images/full.jpg',
+    #    "Schiaparelli Hemisphere Enhanced": 'https://marshemispheres.com/images/schiaparelli_enhanced-full.jpg',
+    #    "Syrtis Major Hemisphere Enhanced": 'https://marshemispheres.com/images/syrtis_major_enhanced-full.jpg',
+    #    "Valles Marineris Hemisphere Enhanced": 'https://marshemispheres.com/images/valles_marineris_enhanced-full.jpg'
+    #}
+    
+
+    # Stop webdriver and return data
+    #browser.quit()
+    #return data
 
 def mars_news(browser):
 
@@ -86,7 +84,8 @@ def featured_image(browser):
 
     return img_url
 
-    hemisphere_image_urls = []
+#full_image = browser.find_by_css('a.product-item img')
+hemisphere_image_urls = []
 def mars_facts():
 
     # Add try/except for error handling
@@ -106,35 +105,21 @@ def mars_facts():
     return df.to_html(classes="table table-striped")
 
 
-    # if __name__ == "__main__":
+if __name__ == "__main__":
 
-def img_urls(browser):
-    # 1. Use browser to visit the URL 
-    url = 'https://marshemispheres.com/'
-    browser.visit(url)
-    #define full_image variable outside the for loop
-    full_image = browser.find_by_css('a.product-item img')
-
-    # 2. Create a list to hold the images and titles.
-    hemisphere_image_urls = []
-
-    # 3. Write code to retrieve the image urls and titles for each hemisphere.
-    #All of the hemispheres
+        # Function to scrape the hemisphere data and return as a list of dictionaries
+    hemi={}
+    # for i in range(len(full_image)):
     for i in range(4):
-        hemi={}
+        print(browser)
         full_image = browser.find_by_css('a.product-item img')[i].click()
         full_image1 = browser.find_by_text('Sample').first
         hemi['title'] = browser.find_by_css('h2.title').text
         hemi['image_url'] = full_image1['href']
-        # Append hemisphere object to list
-        hemisphere_image_urls.append(hemi)
-        browser.back()
 
-    # 4. Print the list that holds the dictionary of each image url and title.
-        
-    print(hemisphere_image_urls)
-    # 5. Quit the browser
-    browser.quit()
-    return hemisphere_image_urls
+# Append hemisphere object to list
+    hemisphere_image_urls.append({hemi})
+    # return(hemi)
 
-    #if __name__ == "__main__":
+    # If running as script, print scraped data
+    print(scrape_all())
