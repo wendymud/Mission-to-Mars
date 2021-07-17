@@ -33,21 +33,32 @@
       <!-- Section for Featured Image and Facts table -->
       <div class="row" id="mars-featured-image">
         <div class="col-md-8">
-          <h2>Featured Mars Image</h2>
-          <img
-            src="{{mars.featured_image }}"
-            class="img-responsive"
-            alt="Responsive image"
-          />
+            <h2>Featured Mars Image</h2>
+            <img src="{{ mars.featured_image }}" class="img-responsive" alt="Responsive image">
         </div>
+      </div>
+        <!-- Mars Facts -->
         <div class="col-md-4">
-          <!-- Mars Facts -->
           <div class="row" id="mars-facts">
             <h4>Mars Facts</h4>
             {{ mars.facts | safe }}
           </div>
-        </div>
-      </div>
-    </div>
+          <!--Section for Mars Hemispheres-->
+          <div> class="row" id="mars-hemispheres"
+            <div> class="page header"
+              <h3 class="text-center">Mars Hemispheres</h3>
+              {% for hemisphere in mars.hemispheres %}
+            </div>
+
+              <div class="col=md=6">
+                <div class="thumbnail">
+                  <img src="{{img_urls}}">
+                  <div class="caption">
+                    <h4>{{hemisphere.img_urls}}</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
   </body>
 </html>

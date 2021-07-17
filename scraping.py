@@ -14,11 +14,9 @@ def scrape_all():
     executable_path = {'executable_path': 'C:\Program Files\Google\Chrome\Application\chromedriver.exe'}
     browser = Browser('chrome', **executable_path, headless=True)
     
-    img_urls(browser)
     news_title, news_paragraph = mars_news(browser)
-    image_url, title = mars_facts(browser)
-    #Run all scraping functions and store results in a dictionary
-
+    
+    
     #Run all scraping functions and store results in dictionary: 
     data = {
             "news_title": news_title,
@@ -26,7 +24,7 @@ def scrape_all():
             "featured_image": featured_image(browser),
             "facts": mars_facts(),
             "last modified": dt.datetime.now(),
-            "img_url": title
+            "hemispheres": img_urls(browser)
     }
     # stop webdriver and return data
     browser.quit()
@@ -36,7 +34,8 @@ def mars_news(browser):
 
     # Scrape Mars News
     # Visit the mars nasa news site
-    url = 'https://data-class-mars.s3.amazonaws.com/Mars/index.html'
+
+    url = 'https://redplanetscience.com/'
     browser.visit(url)
 
     # Optional delay for loading the page
@@ -62,7 +61,8 @@ def mars_news(browser):
 
 def featured_image(browser):
     # Visit URL
-    url = 'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/index.html'
+    #url = 'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/index.html'
+    url = 'https://spaceimages-mars.com'
     browser.visit(url)
 
     # Find and click the full image button
@@ -86,15 +86,13 @@ def featured_image(browser):
 
     return img_url
 
-    hemisphere_image_urls = []
+hemisphere_urls = []
 def mars_facts():
 
     # Add try/except for error handling
     try:
-             
-        # Use 'read_html' to scrape the facts table into a dataframe
-        df = pd.read_html('https://data-class-mars-facts.s3.amazonaws.com/Mars_Facts/index.html')[0]
-
+        # use 'read_html" to scrape the facts table into a dataframe
+        df = pd.read_html('https://galaxyfacts-mars.com')[0]
     except BaseException:
         return None
 
@@ -105,36 +103,52 @@ def mars_facts():
     # Convert dataframe into HTML format, add bootstrap
     return df.to_html(classes="table table-striped")
 
+    #define full_image variable outside the for loop
+    full_image = browser.find_by_css('a.product-item img')
 
-    # if __name__ == "__main__":
+if __name__ == "__main__":
+    print(scrape_all)
 
 def img_urls(browser):
     # 1. Use browser to visit the URL 
     url = 'https://marshemispheres.com/'
     browser.visit(url)
-    #define full_image variable outside the for loop
-    full_image = browser.find_by_css('a.product-item img')
-
+    
     # 2. Create a list to hold the images and titles.
     hemisphere_image_urls = []
 
     # 3. Write code to retrieve the image urls and titles for each hemisphere.
     #All of the hemispheres
     for i in range(4):
-        hemi={}
-        full_image = browser.find_by_css('a.product-item img')[i].click()
-        full_image1 = browser.find_by_text('Sample').first
-        hemi['title'] = browser.find_by_css('h2.title').text
-        hemi['image_url'] = full_image1['href']
+        #hemispheres={}
+        browser.find_by_css('a.product-item img')[i].click()
+        #full_image1 = browser.find_by_text('Sample').first
+        #hemispheres['title'] = browser.find_by_css('h2.title').text
+        #hemispheres['image_url'] = full_image1['href']
         # Append hemisphere object to list
-        hemisphere_image_urls.append(hemi)
+        hemisphere_data = scrape_hemisphere(browser.html)
+        hemisphere_image_urls.append(hemisphere_data)
         browser.back()
-
-    # 4. Print the list that holds the dictionary of each image url and title.
-        
-    print(hemisphere_image_urls)
-    # 5. Quit the browser
-    browser.quit()
     return hemisphere_image_urls
 
-    #if __name__ == "__main__":
+    # 4. Print the list that holds the dictionary of each image url and title.
+def scrape_hemisphere(html_text):
+    # parse html text
+    hemi_soup = soup(html_text, "html.parser")
+    # adding try/except for error handling
+    try:
+        title_elem = hemi_soup.find("h2", class_="title").get_text()
+        sample_elem = hemi_soup.find("a", text="Sample").get("href")
+    except AttributeError:
+        # Image error will return None, for better front-end handling
+        title_elem = None
+        sample_elem = None
+    hemispheres = {
+        "title": title_elem,
+        "img_url": sample_elem
+    }
+    return hemispheres    
+    
+    # 5. Quit the browser
+    #browser.quit()
+print(scrape_all)
