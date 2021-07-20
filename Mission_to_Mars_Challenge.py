@@ -1,7 +1,7 @@
 # Import Splinter and BeautifulSoupfrom splinter import Browser
 from splinter import Browser
 from bs4 import BeautifulSoup as soup
-from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.chrome #import ChromeDriverManager
 import pandas as pd
 
 # Set up Splinter

@@ -131,7 +131,7 @@ def img_urls(browser):
         hemisphere_image_urls.append(hemi)
         browser.back()
 
-        print(hemisphere_image_urls)
+    return hemisphere_image_urls
 
 if __name__ == "__main__":
         
